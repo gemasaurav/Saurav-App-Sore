@@ -87,6 +87,7 @@ def init_db():
     conn.commit()
     conn.close()
 
+init_db()
 # ==================== HELPERS ====================
 def allowed_file(filename, allowed):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in allowed
