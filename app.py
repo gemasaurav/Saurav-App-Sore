@@ -25,8 +25,6 @@ ALLOWED_ICON_EXTENSIONS = {"png", "jpg", "jpeg", "webp", "gif"}
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(ICON_FOLDER, exist_ok=True)
 
-init_db()
-
 # Change this password before deploying!
 ADMIN_USERNAME = "admin"
 ADMIN_PASSWORD = "Saurav@123"   # ← CHANGE THIS!
