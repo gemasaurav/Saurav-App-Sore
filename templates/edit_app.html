@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Edit {{ app.name }} — Saurav App Store{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white">
+                <h4 class="mb-0"><i class="bi bi-pencil"></i> Edit App</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">App Name *</label>
+                        <input type="text" name="name" class="form-control" required maxlength="100"
+                               value="{{ app.name }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" rows="4">{{ app.description or '' }}</textarea>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Version</label>
+                            <input type="text" name="version" class="form-control" value="{{ app.version }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Visibility</label>
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" name="is_admin_only" id="adminOnly"
+                                       {% if app.is_admin_only %}checked{% endif %}>
+                                <label class="form-check-label" for="adminOnly">
+                                    Admin Only (hidden from public)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Replace App File (leave empty to keep current)</label>
+                        <input type="file" name="app_file" class="form-control"
+                               accept=".apk,.zip,.exe,.dmg,.msi,.deb,.AppImage,.ipa">
+                        <div class="form-text">Current file: {{ app.filename }}</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Replace Icon (leave empty to keep current)</label>
+                        <input type="file" name="icon" class="form-control"
+                               accept=".png,.jpg,.jpeg,.webp,.gif">
+                        {% if app.icon %}
+                        <div class="mt-2">
+                            <img src="{{ url_for('static', filename='icons/' + app.icon) }}" 
+                                 width="64" height="64" class="rounded border">
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i> Save Changes
+                        </button>
+                        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

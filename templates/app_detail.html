@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}{{ app.name }} — Saurav App Store{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-start gap-4 mb-4">
+                    {% if app.icon %}
+                    <img src="{{ url_for('static', filename='icons/' + app.icon) }}" 
+                         class="app-icon-lg" alt="{{ app.name }}">
+                    {% else %}
+                    <div class="app-icon-placeholder-lg">
+                        <i class="bi bi-app"></i>
+                    </div>
+                    {% endif %}
+
+                    <div class="flex-grow-1">
+                        <h2 class="mb-1">{{ app.name }}</h2>
+                        <p class="text-muted mb-2">Version {{ app.version }}</p>
+
+                        {% if app.is_admin_only %}
+                        <span class="badge bg-warning text-dark mb-2">
+                            <i class="bi bi-lock"></i> Admin Only
+                        </span>
+                        {% endif %}
+
+                        <div class="mb-2">
+                            {% if rating_info.average > 0 %}
+                            <span class="text-warning fs-5">
+                                {% for i in range(5) %}
+                                    {% if i < rating_info.average|int %}
+                                        <i class="bi bi-star-fill"></i>
+                                    {% elif i < rating_info.average %}
+                                        <i class="bi bi-star-half"></i>
+                                    {% else %}
+                                        <i class="bi bi-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </span>
+                            <span class="ms-2">{{ rating_info.average }} ({{ rating_info.count }} ratings)</span>
+                            {% else %}
+                            <span class="text-muted">No ratings yet</span>
+                            {% endif %}
+                        </div>
+
+                        <p class="text-muted small mb-0">
+                            <i class="bi bi-download"></i> {{ app.download_count }} downloads
+                        </p>
+                    </div>
+                </div>
+
+                <h5>Description</h5>
+                <p class="text-secondary" style="white-space: pre-wrap;">{{ app.description or "No description provided." }}</p>
+
+                <div class="d-grid gap-2 d-md-flex mt-4">
+                    <a href="{{ url_for('download', app_id=app.id) }}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-download"></i> Download Free
+                    </a>
+                    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-lg">
+                        <i class="bi bi-arrow-left"></i> Back to Store
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rating Form -->
+        <div class="card shadow-sm border-0 mt-4">
+            <div class="card-body p-4">
+                <h5 class="mb-3"><i class="bi bi-star"></i> Rate this App</h5>
+                <form method="POST" action="{{ url_for('rate_app', app_id=app.id) }}">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Your Name *</label>
+                            <input type="text" name="user_name" class="form-control" required maxlength="50"
+                                   placeholder="Enter your name">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Stars *</label>
+                            <select name="stars" class="form-select" required>
+                                <option value="">Select rating</option>
+                                <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                                <option value="4">⭐⭐⭐⭐ Good</option>
+                                <option value="3">⭐⭐⭐ Average</option>
+                                <option value="2">⭐⭐ Poor</option>
+                                <option value="1">⭐ Very Poor</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Feedback (optional)</label>
+                            <textarea name="feedback" class="form-control" rows="3"
+                                      placeholder="Share your experience..."></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-send"></i> Submit Review
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Existing Reviews -->
+        <div class="card shadow-sm border-0 mt-4">
+            <div class="card-body p-4">
+                <h5 class="mb-3"><i class="bi bi-chat-left-text"></i> Reviews ({{ ratings|length }})</h5>
+
+                {% if ratings %}
+                    {% for r in ratings %}
+                    <div class="border-bottom pb-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>{{ r.user_name }}</strong>
+                                <span class="text-warning ms-2">
+                                    {% for i in range(r.stars) %}<i class="bi bi-star-fill"></i>{% endfor %}
+                                    {% for i in range(5 - r.stars) %}<i class="bi bi-star"></i>{% endfor %}
+                                </span>
+                            </div>
+                            <small class="text-muted">{{ r.created_at[:10] }}</small>
+                        </div>
+                        {% if r.feedback %}
+                        <p class="mb-1 mt-1 text-secondary">{{ r.feedback }}</p>
+                        {% endif %}
+                        {% if is_admin %}
+                        <form method="POST" action="{{ url_for('delete_rating', rating_id=r.id) }}" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger mt-1"
+                                    onclick="return confirm('Delete this rating?')">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted mb-0">No reviews yet. Be the first!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
