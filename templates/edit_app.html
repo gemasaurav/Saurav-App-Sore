@@ -12,8 +12,7 @@
                 <form method="POST" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label class="form-label">App Name *</label>
-                        <input type="text" name="name" class="form-control" required maxlength="100"
-                               value="{{ app.name }}">
+                        <input type="text" name="name" class="form-control" required value="{{ app.name }}">
                     </div>
 
                     <div class="mb-3">
@@ -31,28 +30,31 @@
                             <div class="form-check form-switch mt-2">
                                 <input class="form-check-input" type="checkbox" name="is_admin_only" id="adminOnly"
                                        {% if app.is_admin_only %}checked{% endif %}>
-                                <label class="form-check-label" for="adminOnly">
-                                    Admin Only (hidden from public)
-                                </label>
+                                <label class="form-check-label" for="adminOnly">Admin Only</label>
                             </div>
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Replace App File (leave empty to keep current)</label>
+                        <label class="form-label">Download Link (Recommended)</label>
+                        <input type="url" name="download_url" class="form-control"
+                               value="{{ app.download_url or '' }}"
+                               placeholder="https://github.com/... or Google Drive link">
+                        <div class="form-text text-success">Best option – permanent</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Replace Uploaded File (Optional)</label>
                         <input type="file" name="app_file" class="form-control"
                                accept=".apk,.zip,.exe,.dmg,.msi,.deb,.AppImage,.ipa">
-                        <div class="form-text">Current file: {{ app.filename }}</div>
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label">Replace Icon (leave empty to keep current)</label>
-                        <input type="file" name="icon" class="form-control"
-                               accept=".png,.jpg,.jpeg,.webp,.gif">
+                        <label class="form-label">Replace Icon (Optional)</label>
+                        <input type="file" name="icon" class="form-control" accept=".png,.jpg,.jpeg,.webp,.gif">
                         {% if app.icon %}
                         <div class="mt-2">
-                            <img src="{{ url_for('static', filename='icons/' + app.icon) }}" 
-                                 width="64" height="64" class="rounded border">
+                            <img src="{{ url_for('static', filename='icons/' + app.icon) }}" width="64" class="rounded border">
                         </div>
                         {% endif %}
                     </div>
